@@ -81,7 +81,7 @@ export default function AuthPage() {
       <div className="max-w-md w-full space-y-8 md:mr-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            <span className="text-primary">Math</span>Quiz System
+            <span className="text-primary">Quiz</span> System
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Online learning and assessment platform
@@ -253,9 +253,9 @@ export default function AuthPage() {
       
       <div className="hidden md:block max-w-md w-full mt-8 md:mt-0">
         <div className="bg-white p-8 rounded-lg shadow-lg">
-          <h3 className="text-2xl font-bold text-gray-800 mb-4">Welcome to MathQuiz</h3>
+          <h3 className="text-2xl font-bold text-gray-800 mb-4">Welcome to Quiz System</h3>
           <p className="text-gray-600 mb-6">
-            A complete quiz platform for high school students with features designed for mathematics and science education.
+            A complete quiz platform for high school students with features designed for multiple subjects including mathematics, science, literature and more.
           </p>
           
           <div className="space-y-4">
