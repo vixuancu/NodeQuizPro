@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { eq, and, desc, asc, gte, lte, or, ne, inArray } from "drizzle-orm";
+import { eq, and, desc, asc, gte, lte, or, ne, inArray, isNull, isNotNull } from "drizzle-orm";
 import {
   users, exams, questions, submissions, answers,
   type User, type InsertUser,
@@ -9,9 +9,9 @@ import {
   type Answer, type InsertAnswer
 } from "@shared/schema";
 import session from "express-session";
-import createMemoryStore from "memorystore";
+import connectPg from "connect-pg-simple";
 
-const MemoryStore = createMemoryStore(session);
+const PostgresSessionStore = connectPg(session);
 
 // Storage interface definition
 export interface IStorage {
@@ -51,218 +51,215 @@ export interface IStorage {
   getAnswersBySubmission(submissionId: number): Promise<Answer[]>;
   
   // Session store
-  sessionStore: session.SessionStore;
+  sessionStore: session.Store;
 }
 
-export class MemStorage implements IStorage {
-  private usersMap: Map<number, User>;
-  private examsMap: Map<number, Exam>;
-  private questionsMap: Map<number, Question>;
-  private submissionsMap: Map<number, Submission>;
-  private answersMap: Map<number, Answer>;
-  private currentId: {
-    users: number;
-    exams: number;
-    questions: number;
-    submissions: number;
-    answers: number;
-  };
-  sessionStore: session.SessionStore;
+export class DatabaseStorage implements IStorage {
+  sessionStore: session.Store;
 
   constructor() {
-    this.usersMap = new Map();
-    this.examsMap = new Map();
-    this.questionsMap = new Map();
-    this.submissionsMap = new Map();
-    this.answersMap = new Map();
-    this.currentId = {
-      users: 1,
-      exams: 1,
-      questions: 1,
-      submissions: 1,
-      answers: 1
-    };
-    this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000, // prune expired entries every 24h
+    // Initialize PostgreSQL-based session store
+    this.sessionStore = new PostgresSessionStore({
+      conObject: {
+        connectionString: process.env.DATABASE_URL,
+      },
+      createTableIfMissing: true,
     });
   }
 
   // User management
   async getUser(id: number): Promise<User | undefined> {
-    return this.usersMap.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.usersMap.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
 
   async createUser(userData: InsertUser): Promise<User> {
-    const id = this.currentId.users++;
-    const now = new Date();
-    const user: User = { ...userData, id, createdAt: now };
-    this.usersMap.set(id, user);
+    const [user] = await db.insert(users).values(userData).returning();
     return user;
   }
 
   async updateUser(id: number, data: Partial<User>): Promise<User | undefined> {
-    const user = this.usersMap.get(id);
-    if (!user) return undefined;
-    
-    const updatedUser = { ...user, ...data };
-    this.usersMap.set(id, updatedUser);
-    return updatedUser;
+    const [user] = await db
+      .update(users)
+      .set(data)
+      .where(eq(users.id, id))
+      .returning();
+    return user;
   }
 
   async getStudentsByClass(className: string): Promise<User[]> {
-    return Array.from(this.usersMap.values()).filter(
-      user => user.role === 'student' && user.class === className
-    );
+    return db
+      .select()
+      .from(users)
+      .where(
+        and(
+          eq(users.role, 'student'),
+          eq(users.class, className)
+        )
+      );
   }
 
   async getAllClasses(): Promise<string[]> {
-    const classes = Array.from(this.usersMap.values())
-      .filter(user => user.role === 'student' && user.class)
-      .map(user => user.class as string);
+    const result = await db
+      .select({ class: users.class })
+      .from(users)
+      .where(
+        and(
+          eq(users.role, 'student'),
+          isNotNull(users.class)
+        )
+      )
+      .groupBy(users.class);
     
-    return [...new Set(classes)]; // Get unique class names
+    return result.map(row => row.class as string);
   }
 
   // Exam management
   async createExam(examData: InsertExam): Promise<Exam> {
-    const id = this.currentId.exams++;
-    const now = new Date();
-    const exam: Exam = { ...examData, id, createdAt: now };
-    this.examsMap.set(id, exam);
+    const [exam] = await db.insert(exams).values(examData).returning();
     return exam;
   }
 
   async getExam(id: number): Promise<Exam | undefined> {
-    return this.examsMap.get(id);
+    const [exam] = await db.select().from(exams).where(eq(exams.id, id));
+    return exam;
   }
 
   async updateExam(id: number, data: Partial<Exam>): Promise<Exam | undefined> {
-    const exam = this.examsMap.get(id);
-    if (!exam) return undefined;
-    
-    const updatedExam = { ...exam, ...data };
-    this.examsMap.set(id, updatedExam);
-    return updatedExam;
+    const [exam] = await db
+      .update(exams)
+      .set(data)
+      .where(eq(exams.id, id))
+      .returning();
+    return exam;
   }
 
   async deleteExam(id: number): Promise<boolean> {
-    return this.examsMap.delete(id);
+    const result = await db
+      .delete(exams)
+      .where(eq(exams.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
   }
 
   async getExamsForTeacher(teacherId: number): Promise<Exam[]> {
-    return Array.from(this.examsMap.values()).filter(
-      exam => exam.createdById === teacherId
-    );
+    return db
+      .select()
+      .from(exams)
+      .where(eq(exams.createdById, teacherId));
   }
 
   async getExamsForClass(className: string): Promise<Exam[]> {
-    return Array.from(this.examsMap.values()).filter(
-      exam => exam.class === className
-    );
+    return db
+      .select()
+      .from(exams)
+      .where(eq(exams.class, className));
   }
 
   async getUpcomingExamsForStudent(studentId: number): Promise<Exam[]> {
-    const student = this.usersMap.get(studentId);
+    const student = await this.getUser(studentId);
     if (!student || student.role !== 'student' || !student.class) {
       return [];
     }
     
     const now = new Date();
-    return Array.from(this.examsMap.values()).filter(
-      exam => exam.class === student.class && 
-              exam.status === 'upcoming' &&
-              new Date(exam.startTime) > now
-    );
+    return db
+      .select()
+      .from(exams)
+      .where(
+        and(
+          eq(exams.class, student.class),
+          eq(exams.status, 'upcoming'),
+          gte(exams.startTime, now)
+        )
+      );
   }
 
   // Question management
   async createQuestion(questionData: InsertQuestion): Promise<Question> {
-    const id = this.currentId.questions++;
-    const now = new Date();
-    const question: Question = { ...questionData, id, createdAt: now };
-    this.questionsMap.set(id, question);
+    const [question] = await db.insert(questions).values(questionData).returning();
     return question;
   }
 
   async getQuestion(id: number): Promise<Question | undefined> {
-    return this.questionsMap.get(id);
+    const [question] = await db.select().from(questions).where(eq(questions.id, id));
+    return question;
   }
 
   async getQuestionsByExam(examId: number): Promise<Question[]> {
-    return Array.from(this.questionsMap.values()).filter(
-      question => question.examId === examId
-    );
+    return db
+      .select()
+      .from(questions)
+      .where(eq(questions.examId, examId));
   }
 
   async updateQuestion(id: number, data: Partial<Question>): Promise<Question | undefined> {
-    const question = this.questionsMap.get(id);
-    if (!question) return undefined;
-    
-    const updatedQuestion = { ...question, ...data };
-    this.questionsMap.set(id, updatedQuestion);
-    return updatedQuestion;
+    const [question] = await db
+      .update(questions)
+      .set(data)
+      .where(eq(questions.id, id))
+      .returning();
+    return question;
   }
 
   async deleteQuestion(id: number): Promise<boolean> {
-    return this.questionsMap.delete(id);
+    const result = await db
+      .delete(questions)
+      .where(eq(questions.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
   }
 
   // Submission management
   async createSubmission(submissionData: InsertSubmission): Promise<Submission> {
-    const id = this.currentId.submissions++;
-    const now = new Date();
-    const submission: Submission = { ...submissionData, id, createdAt: now };
-    this.submissionsMap.set(id, submission);
+    const [submission] = await db.insert(submissions).values(submissionData).returning();
     return submission;
   }
 
   async getSubmission(id: number): Promise<Submission | undefined> {
-    return this.submissionsMap.get(id);
+    const [submission] = await db.select().from(submissions).where(eq(submissions.id, id));
+    return submission;
   }
 
   async updateSubmission(id: number, data: Partial<Submission>): Promise<Submission | undefined> {
-    const submission = this.submissionsMap.get(id);
-    if (!submission) return undefined;
-    
-    const updatedSubmission = { ...submission, ...data };
-    this.submissionsMap.set(id, updatedSubmission);
-    return updatedSubmission;
+    const [submission] = await db
+      .update(submissions)
+      .set(data)
+      .where(eq(submissions.id, id))
+      .returning();
+    return submission;
   }
 
   async getSubmissionsByExam(examId: number): Promise<Submission[]> {
-    return Array.from(this.submissionsMap.values()).filter(
-      submission => submission.examId === examId
-    );
+    return db
+      .select()
+      .from(submissions)
+      .where(eq(submissions.examId, examId));
   }
 
   async getSubmissionsByStudent(studentId: number): Promise<Submission[]> {
-    return Array.from(this.submissionsMap.values()).filter(
-      submission => submission.userId === studentId
-    ).sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    return db
+      .select()
+      .from(submissions)
+      .where(eq(submissions.userId, studentId))
+      .orderBy(desc(submissions.id));
   }
 
   // Answer management
   async saveAnswer(answerData: InsertAnswer): Promise<Answer> {
-    const id = this.currentId.answers++;
-    const now = new Date();
-    const answer: Answer = { ...answerData, id, createdAt: now };
-    this.answersMap.set(id, answer);
+    const [answer] = await db.insert(answers).values(answerData).returning();
     return answer;
   }
 
   async getAnswersBySubmission(submissionId: number): Promise<Answer[]> {
-    return Array.from(this.answersMap.values()).filter(
-      answer => answer.submissionId === submissionId
-    );
+    return db
+      .select()
+      .from(answers)
+      .where(eq(answers.submissionId, submissionId));
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
