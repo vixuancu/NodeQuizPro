@@ -30,7 +30,7 @@ export default function Header() {
           <h1 className="text-xl font-bold text-gray-800">
             <Link href="/">
               <a className="cursor-pointer">
-                <span className="text-primary">Math</span>Quiz
+                <span className="text-primary">Quiz</span> System
               </a>
             </Link>
           </h1>
