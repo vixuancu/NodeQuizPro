@@ -317,9 +317,9 @@ export default function TeacherQuestions() {
                     <SelectValue placeholder="Select an exam" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Choose an exam</SelectItem>
+                    <SelectItem value="choose-exam">Choose an exam</SelectItem>
                     {isLoadingExams ? (
-                      <SelectItem value="" disabled>
+                      <SelectItem value="loading-exams" disabled>
                         Loading exams...
                       </SelectItem>
                     ) : exams?.length > 0 ? (
@@ -329,7 +329,7 @@ export default function TeacherQuestions() {
                         </SelectItem>
                       ))
                     ) : (
-                      <SelectItem value="" disabled>
+                      <SelectItem value="no-exams-available" disabled>
                         No exams available
                       </SelectItem>
                     )}
@@ -366,7 +366,7 @@ export default function TeacherQuestions() {
                         <SelectValue placeholder="All Topics" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All Topics</SelectItem>
+                        <SelectItem value="all">All Topics</SelectItem>
                         {topics.map((topic: string) => (
                           <SelectItem key={topic} value={topic}>
                             {topic}
@@ -383,7 +383,7 @@ export default function TeacherQuestions() {
                         <SelectValue placeholder="All Difficulties" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All Difficulties</SelectItem>
+                        <SelectItem value="all">All Difficulties</SelectItem>
                         {difficultyOptions.map(option => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}

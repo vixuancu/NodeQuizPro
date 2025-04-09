@@ -39,40 +39,45 @@ export default function Header() {
           {/* Teacher Navigation */}
           {isTeacher && (
             <div className="flex space-x-4">
-              <Link href="/teacher/dashboard">
-                <a className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
+              <Link 
+                href="/teacher/dashboard"
+                className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
                   location === '/teacher/dashboard' ? 'text-primary' : ''
-                }`}>
-                  Dashboard
-                </a>
+                }`}
+              >
+                Dashboard
               </Link>
-              <Link href="/teacher/exams">
-                <a className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
+              <Link 
+                href="/teacher/exams"
+                className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
                   location === '/teacher/exams' ? 'text-primary' : ''
-                }`}>
-                  Exams
-                </a>
+                }`}
+              >
+                Exams
               </Link>
-              <Link href="/teacher/questions">
-                <a className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
+              <Link 
+                href="/teacher/questions"
+                className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
                   location === '/teacher/questions' ? 'text-primary' : ''
-                }`}>
-                  Questions
-                </a>
+                }`}
+              >
+                Questions
               </Link>
-              <Link href="/teacher/students">
-                <a className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
+              <Link 
+                href="/teacher/students"
+                className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
                   location === '/teacher/students' ? 'text-primary' : ''
-                }`}>
-                  Students
-                </a>
+                }`}
+              >
+                Students
               </Link>
-              <Link href="/teacher/results">
-                <a className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
+              <Link 
+                href="/teacher/results"
+                className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
                   location === '/teacher/results' ? 'text-primary' : ''
-                }`}>
-                  Results
-                </a>
+                }`}
+              >
+                Results
               </Link>
             </div>
           )}
@@ -80,33 +85,37 @@ export default function Header() {
           {/* Student Navigation */}
           {isStudent && (
             <div className="flex space-x-4">
-              <Link href="/student/dashboard">
-                <a className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
+              <Link 
+                href="/student/dashboard"
+                className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
                   location === '/student/dashboard' ? 'text-primary' : ''
-                }`}>
-                  Dashboard
-                </a>
+                }`}
+              >
+                Dashboard
               </Link>
-              <Link href="/student/exams">
-                <a className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
+              <Link 
+                href="/student/exams"
+                className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
                   location === '/student/exams' ? 'text-primary' : ''
-                }`}>
-                  My Exams
-                </a>
+                }`}
+              >
+                My Exams
               </Link>
-              <Link href="/student/results">
-                <a className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
+              <Link 
+                href="/student/results"
+                className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
                   location === '/student/results' ? 'text-primary' : ''
-                }`}>
-                  My Results
-                </a>
+                }`}
+              >
+                My Results
               </Link>
-              <Link href="/student/profile">
-                <a className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
+              <Link 
+                href="/student/profile"
+                className={`text-gray-600 hover:text-primary px-3 py-2 rounded-md text-sm font-medium ${
                   location === '/student/profile' ? 'text-primary' : ''
-                }`}>
-                  Profile
-                </a>
+                }`}
+              >
+                Profile
               </Link>
             </div>
           )}
@@ -162,40 +171,45 @@ export default function Header() {
             {/* Teacher Mobile Nav */}
             {isTeacher && (
               <div>
-                <Link href="/teacher/dashboard">
-                  <a className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
+                <Link 
+                  href="/teacher/dashboard"
+                  className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
                     location === '/teacher/dashboard' ? 'text-primary' : ''
-                  }`}>
-                    Dashboard
-                  </a>
+                  }`}
+                >
+                  Dashboard
                 </Link>
-                <Link href="/teacher/exams">
-                  <a className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
+                <Link 
+                  href="/teacher/exams"
+                  className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
                     location === '/teacher/exams' ? 'text-primary' : ''
-                  }`}>
-                    Exams
-                  </a>
+                  }`}
+                >
+                  Exams
                 </Link>
-                <Link href="/teacher/questions">
-                  <a className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
+                <Link 
+                  href="/teacher/questions"
+                  className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
                     location === '/teacher/questions' ? 'text-primary' : ''
-                  }`}>
-                    Questions
-                  </a>
+                  }`}
+                >
+                  Questions
                 </Link>
-                <Link href="/teacher/students">
-                  <a className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
+                <Link 
+                  href="/teacher/students"
+                  className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
                     location === '/teacher/students' ? 'text-primary' : ''
-                  }`}>
-                    Students
-                  </a>
+                  }`}
+                >
+                  Students
                 </Link>
-                <Link href="/teacher/results">
-                  <a className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
+                <Link 
+                  href="/teacher/results"
+                  className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
                     location === '/teacher/results' ? 'text-primary' : ''
-                  }`}>
-                    Results
-                  </a>
+                  }`}
+                >
+                  Results
                 </Link>
               </div>
             )}
@@ -203,33 +217,37 @@ export default function Header() {
             {/* Student Mobile Nav */}
             {isStudent && (
               <div>
-                <Link href="/student/dashboard">
-                  <a className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
+                <Link 
+                  href="/student/dashboard"
+                  className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
                     location === '/student/dashboard' ? 'text-primary' : ''
-                  }`}>
-                    Dashboard
-                  </a>
+                  }`}
+                >
+                  Dashboard
                 </Link>
-                <Link href="/student/exams">
-                  <a className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
+                <Link 
+                  href="/student/exams"
+                  className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
                     location === '/student/exams' ? 'text-primary' : ''
-                  }`}>
-                    My Exams
-                  </a>
+                  }`}
+                >
+                  My Exams
                 </Link>
-                <Link href="/student/results">
-                  <a className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
+                <Link 
+                  href="/student/results"
+                  className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
                     location === '/student/results' ? 'text-primary' : ''
-                  }`}>
-                    My Results
-                  </a>
+                  }`}
+                >
+                  My Results
                 </Link>
-                <Link href="/student/profile">
-                  <a className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
+                <Link 
+                  href="/student/profile"
+                  className={`block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary ${
                     location === '/student/profile' ? 'text-primary' : ''
-                  }`}>
-                    Profile
-                  </a>
+                  }`}
+                >
+                  Profile
                 </Link>
               </div>
             )}
@@ -248,10 +266,11 @@ export default function Header() {
               </div>
               <div className="mt-3 space-y-1 px-2">
                 {isStudent && (
-                  <Link href="/student/profile">
-                    <a className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary">
-                      Your Profile
-                    </a>
+                  <Link 
+                    href="/student/profile"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary"
+                  >
+                    Your Profile
                   </Link>
                 )}
                 <button

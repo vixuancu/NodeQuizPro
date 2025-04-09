@@ -61,12 +61,15 @@ export default function TeacherExams() {
   
   // Fetch exams
   const { 
-    data: exams,
+    data: examsData,
     isLoading: isLoadingExams,
     isError: isErrorExams
   } = useQuery({
     queryKey: ['/api/exams'],
   });
+  
+  // Ensure exams is an array for filtering
+  const exams = Array.isArray(examsData) ? examsData : [];
   
   // Create exam mutation
   const createExamMutation = useMutation({

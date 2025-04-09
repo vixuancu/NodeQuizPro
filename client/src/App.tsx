@@ -43,7 +43,9 @@ function Router() {
       <StudentRoute path="/student/exam-taking/:examId" component={ExamTaking} />
 
       {/* Fallback to 404 */}
-      <Route component={NotFound} />
+      <Route path="*">
+        <NotFound />
+      </Route>
     </Switch>
   );
 }

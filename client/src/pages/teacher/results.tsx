@@ -60,11 +60,14 @@ export default function TeacherResults() {
   
   // Fetch exams
   const { 
-    data: exams,
+    data: examsData,
     isLoading: isLoadingExams,
   } = useQuery({
     queryKey: ['/api/exams'],
   });
+  
+  // Ensure exams is an array for operations
+  const exams = Array.isArray(examsData) ? examsData : [];
   
   // Fetch submissions for selected exam
   const { 
