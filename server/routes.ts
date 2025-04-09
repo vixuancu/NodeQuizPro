@@ -14,6 +14,140 @@ import {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
   setupAuth(app);
+  
+  // Sample data endpoint
+  app.post("/api/sample-data", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.role !== 'teacher') {
+      return res.status(403).json({ message: "Access denied" });
+    }
+    
+    try {
+      // Create sample exams with questions
+      const sampleExams = [
+        {
+          title: "Toán học cơ bản",
+          subject: "mathematics",
+          class: "10A",
+          topic: "Đại số",
+          description: "Kiểm tra kiến thức về đại số cơ bản",
+          startTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
+          endTime: new Date(Date.now() + 26 * 60 * 60 * 1000),   // Tomorrow + 2 hours
+          duration: 60,
+          status: "upcoming" as const,
+          createdById: req.user.id
+        },
+        {
+          title: "Vật lý học - Chuyển động học",
+          subject: "physics",
+          class: "11B",
+          topic: "Cơ học",
+          description: "Kiểm tra kiến thức về chuyển động của vật",
+          startTime: new Date(),
+          endTime: new Date(Date.now() + 2 * 60 * 60 * 1000),  // Now + 2 hours
+          duration: 45,
+          status: "active" as const,
+          createdById: req.user.id
+        }
+      ];
+      
+      // Create exams
+      const examsCreated = [];
+      for (const examData of sampleExams) {
+        const exam = await storage.createExam(examData);
+        examsCreated.push(exam);
+        
+        // Create sample questions for this exam
+        if (exam.subject === "mathematics") {
+          const mathQuestions = [
+            {
+              examId: exam.id,
+              content: "Giải phương trình: $2x + 3 = 7$",
+              options: ["x = 1", "x = 2", "x = 3", "x = 4"],
+              correctAnswer: "B",  // The second option: "x = 2"
+              difficulty: "easy" as const,
+              points: 2,
+              topic: "Đại số"
+            },
+            {
+              examId: exam.id,
+              content: "Nếu $f(x) = x^2 - 3x + 2$, tính $f(4)$",
+              options: ["6", "10", "14", "18"],
+              correctAnswer: "B",  // The second option: "10"
+              difficulty: "medium" as const, 
+              points: 3,
+              topic: "Đại số"
+            },
+            {
+              examId: exam.id,
+              content: "Giải bất phương trình: $x^2 - 5x + 6 > 0$",
+              options: ["$x < 2$ hoặc $x > 3$", "$x > 2$ hoặc $x < 3$", "$2 < x < 3$", "$x < 2$ và $x > 3$"],
+              correctAnswer: "A",  // The first option: "$x < 2$ hoặc $x > 3$"
+              difficulty: "hard" as const,
+              points: 5,
+              topic: "Đại số"
+            }
+          ];
+          
+          for (const questionData of mathQuestions) {
+            await storage.createQuestion(questionData);
+          }
+        }
+        
+        if (exam.subject === "physics") {
+          const physicsQuestions = [
+            {
+              examId: exam.id,
+              content: "Công thức tính vận tốc trung bình là:",
+              options: ["$v = \\frac{s}{t}$", "$v = a \\times t$", "$v = \\frac{1}{2}at^2$", "$v = v_0 + at$"],
+              correctAnswer: "A",  // The first option: "$v = \\frac{s}{t}$"
+              difficulty: "easy" as const,
+              points: 2,
+              topic: "Cơ học"
+            },
+            {
+              examId: exam.id,
+              content: "Đơn vị đo của gia tốc trong hệ SI là:",
+              options: ["m/s", "m/s²", "km/h", "N/kg"],
+              correctAnswer: "B",  // The second option: "m/s²"
+              difficulty: "easy" as const, 
+              points: 1,
+              topic: "Cơ học"
+            },
+            {
+              examId: exam.id,
+              content: "Một vật chuyển động thẳng đều với vận tốc 5m/s. Quãng đường nó đi được sau 10 giây là:",
+              options: ["25m", "50m", "100m", "10m"],
+              correctAnswer: "B",  // The second option: "50m"
+              difficulty: "medium" as const,
+              points: 3,
+              topic: "Cơ học"
+            },
+            {
+              examId: exam.id,
+              content: "Công thức tính động năng của vật là:",
+              options: ["$E_k = mgh$", "$E_k = \\frac{1}{2}mv^2$", "$E_k = W/t$", "$E_k = F \\times s$"],
+              correctAnswer: "B",  // The second option: "$E_k = \\frac{1}{2}mv^2$" 
+              difficulty: "medium" as const,
+              points: 3,
+              topic: "Cơ học"
+            }
+          ];
+          
+          for (const questionData of physicsQuestions) {
+            await storage.createQuestion(questionData);
+          }
+        }
+      }
+      
+      return res.status(201).json({
+        message: "Sample data created successfully",
+        exams: examsCreated
+      });
+    } catch (error) {
+      console.error("Error creating sample data:", error);
+      return res.status(500).json({ message: "Internal server error", error: String(error) });
+    }
+  });
 
   // Error handler for Zod validation errors
   function handleZodError(error: unknown, res: any) {

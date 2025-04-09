@@ -40,7 +40,8 @@ import {
   FileText,
   BarChart,
   Filter,
-  Loader2
+  Loader2,
+  Database
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -59,6 +60,32 @@ export default function TeacherExams() {
   const [classFilter, setClassFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   
+  // Create sample data mutation
+  const createSampleDataMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest('POST', '/api/sample-data');
+      return await res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/exams'] });
+      toast({
+        title: 'Success',
+        description: `Sample data created successfully (${data.exams.length} exams with questions)`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Error',
+        description: `Failed to create sample data: ${error.message}`,
+        variant: 'destructive',
+      });
+    }
+  });
+  
+  // Handle create sample data
+  const handleCreateSampleData = () => {
+    createSampleDataMutation.mutate();
+  };
   // Fetch exams
   const { 
     data: examsData,
@@ -251,13 +278,24 @@ export default function TeacherExams() {
       <div className="px-4 py-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Exams Management</h2>
-          <Button 
-            onClick={() => setCreateExamOpen(true)}
-            className="flex items-center"
-          >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Create Exam
-          </Button>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline"
+              onClick={handleCreateSampleData}
+              className="flex items-center"
+              disabled={createSampleDataMutation.isPending}
+            >
+              <Database className="mr-2 h-4 w-4" />
+              {createSampleDataMutation.isPending ? 'Creating...' : 'Create Sample Data'}
+            </Button>
+            <Button 
+              onClick={() => setCreateExamOpen(true)}
+              className="flex items-center"
+            >
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Create Exam
+            </Button>
+          </div>
         </div>
         
         {/* Filters */}
