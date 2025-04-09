@@ -275,9 +275,9 @@ export default function TeacherResults() {
                     <SelectValue placeholder="Select an exam" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Choose an exam</SelectItem>
+                    <SelectItem value="choose-exam">Choose an exam</SelectItem>
                     {isLoadingExams ? (
-                      <SelectItem value="" disabled>
+                      <SelectItem value="loading-exams" disabled>
                         Loading exams...
                       </SelectItem>
                     ) : exams?.length > 0 ? (
@@ -287,7 +287,7 @@ export default function TeacherResults() {
                         </SelectItem>
                       ))
                     ) : (
-                      <SelectItem value="" disabled>
+                      <SelectItem value="no-exams-available" disabled>
                         No exams available
                       </SelectItem>
                     )}

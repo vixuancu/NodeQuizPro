@@ -28,10 +28,8 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
         <div className="flex items-center">
           <h1 className="text-xl font-bold text-gray-800">
-            <Link href="/">
-              <a className="cursor-pointer">
-                <span className="text-primary">Quiz</span> System
-              </a>
+            <Link href="/" className="cursor-pointer">
+              <span className="text-primary">Quiz</span> System
             </Link>
           </h1>
         </div>
@@ -131,13 +129,11 @@ export default function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {isStudent && (
-                  <Link href="/student/profile">
-                    <a>
-                      <DropdownMenuItem className="cursor-pointer">
-                        Your Profile
-                      </DropdownMenuItem>
-                    </a>
-                  </Link>
+                  <DropdownMenuItem className="cursor-pointer" asChild>
+                    <Link href="/student/profile">
+                      Your Profile
+                    </Link>
+                  </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">

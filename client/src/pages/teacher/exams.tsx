@@ -268,7 +268,7 @@ export default function TeacherExams() {
                     <SelectValue placeholder="All Subjects" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Subjects</SelectItem>
+                    <SelectItem value="all-subjects">All Subjects</SelectItem>
                     {subjects.map(subject => (
                       <SelectItem key={subject.value} value={subject.value}>
                         {subject.label}
@@ -285,7 +285,7 @@ export default function TeacherExams() {
                     <SelectValue placeholder="All Classes" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Classes</SelectItem>
+                    <SelectItem value="all-classes">All Classes</SelectItem>
                     {classes.map(cls => (
                       <SelectItem key={cls.value} value={cls.value}>
                         {cls.label}
@@ -302,7 +302,7 @@ export default function TeacherExams() {
                     <SelectValue placeholder="All Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Status</SelectItem>
+                    <SelectItem value="all-status">All Status</SelectItem>
                     {statuses.map(status => (
                       <SelectItem key={status.value} value={status.value}>
                         {status.label}
