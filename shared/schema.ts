@@ -112,7 +112,7 @@ export const registerStudentSchema = insertUserSchema
   });
 
 export const registerTeacherSchema = insertUserSchema
-  .omit({ studentId: true, class: true })
+  .omit({ studentId: true, class: true, username: true })
   .extend({
     email: z.string().email("Invalid email address"),
     fullName: z.string().min(1, "Full name is required"),

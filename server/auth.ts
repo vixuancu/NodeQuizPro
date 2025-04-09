@@ -5,11 +5,11 @@ import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
-import { User } from "@shared/schema";
+import { User as UserType } from "@shared/schema";
 
 declare global {
   namespace Express {
-    interface User extends User {}
+    interface User extends UserType {}
   }
 }
 
@@ -74,14 +74,25 @@ export function setupAuth(app: Express) {
   // Registration endpoint for teachers
   app.post("/api/register/teacher", async (req, res, next) => {
     try {
-      const existingUser = await storage.getUserByUsername(req.body.username);
+      // Generate username from fullName
+      const fullName = req.body.fullName;
+      let username = fullName
+        .toLowerCase()
+        .replace(/\s+/g, '.') // replace spaces with dots
+        .replace(/[^a-z0-9.]/g, ''); // remove special chars
+      
+      // Check if username exists
+      const existingUser = await storage.getUserByUsername(username);
       
       if (existingUser) {
-        return res.status(400).json({ message: "Username already exists" });
+        // Add a random number if username exists
+        const randomSuffix = Math.floor(Math.random() * 1000);
+        username = `${username}${randomSuffix}`;
       }
 
       const user = await storage.createUser({
         ...req.body,
+        username,
         role: 'teacher',
         password: await hashPassword(req.body.password),
       });
@@ -105,15 +116,32 @@ export function setupAuth(app: Express) {
         return res.status(403).json({ message: "Only teachers can register students" });
       }
 
-      const existingUser = await storage.getUserByUsername(req.body.username);
+      // Generate username from studentId and fullName
+      const studentId = req.body.studentId;
+      const fullName = req.body.fullName;
+      let username = `${studentId.toLowerCase()}-${fullName
+        .toLowerCase()
+        .replace(/\s+/g, '.')
+        .replace(/[^a-z0-9.]/g, '')}`;
+      
+      // If too long, truncate
+      if (username.length > 50) {
+        username = username.substring(0, 50);
+      }
+
+      // Check if username exists
+      const existingUser = await storage.getUserByUsername(username);
       
       if (existingUser) {
-        return res.status(400).json({ message: "Username already exists" });
+        // Add a random number if username exists
+        const randomSuffix = Math.floor(Math.random() * 1000);
+        username = `${username}${randomSuffix}`;
       }
 
       // Create the student with default password (can be changed later)
       const user = await storage.createUser({
         ...req.body,
+        username,
         role: 'student',
         password: await hashPassword(req.body.password || req.body.studentId),
       });
@@ -128,7 +156,7 @@ export function setupAuth(app: Express) {
 
   // Login endpoint
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
+    passport.authenticate('local', (err: any, user: UserType | false, info: any) => {
       if (err) return next(err);
       if (!user) return res.status(401).json({ message: "Invalid username or password" });
       
@@ -155,7 +183,7 @@ export function setupAuth(app: Express) {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     // Don't send the password in the response
-    const { password, ...userWithoutPassword } = req.user as User;
+    const { password, ...userWithoutPassword } = req.user as UserType;
     res.json(userWithoutPassword);
   });
 }

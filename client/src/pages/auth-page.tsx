@@ -24,7 +24,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 const registerSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   email: z.string().email("Invalid email address"),
-  username: z.string().min(1, "Username is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(1, "Confirm your password"),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -59,7 +58,6 @@ export default function AuthPage() {
     defaultValues: {
       fullName: '',
       email: '',
-      username: '',
       password: '',
       confirmPassword: '',
     },
@@ -74,6 +72,7 @@ export default function AuthPage() {
   const onRegisterSubmit = (data: RegisterFormData) => {
     // Remove confirmPassword before submission
     const { confirmPassword, ...registerData } = data;
+    // Note: backend will generate a username from fullName
     registerTeacherMutation.mutate(registerData);
   };
   
@@ -198,20 +197,7 @@ export default function AuthPage() {
                       )}
                     />
                     
-                    <FormField
-                      control={registerForm.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Username</FormLabel>
-                          <FormControl>
-                            <Input placeholder="johnsmith" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
+
                     <FormField
                       control={registerForm.control}
                       name="password"
