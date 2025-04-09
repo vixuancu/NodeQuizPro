@@ -49,20 +49,26 @@ export default function StudentExams() {
   
   // Fetch exams for student's class
   const { 
-    data: exams,
+    data: examsData,
     isLoading: isLoadingExams,
     isError: isErrorExams
   } = useQuery({
     queryKey: ['/api/exams'],
   });
   
+  // Ensure exams is an array
+  const exams = Array.isArray(examsData) ? examsData : [];
+  
   // Fetch student's submissions
   const { 
-    data: submissions,
+    data: submissionsData,
     isLoading: isLoadingSubmissions
   } = useQuery({
     queryKey: ['/api/submissions/student'],
   });
+  
+  // Ensure submissions is an array
+  const submissions = Array.isArray(submissionsData) ? submissionsData : [];
   
   // Check if an exam is active (can be taken now)
   const isExamActive = (exam: any) => {
@@ -222,7 +228,7 @@ export default function StudentExams() {
                     <SelectValue placeholder="All Subjects" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Subjects</SelectItem>
+                    <SelectItem value="all-subjects">All Subjects</SelectItem>
                     {subjects.map(subject => (
                       <SelectItem key={subject.value} value={subject.value}>
                         {subject.label}
@@ -239,7 +245,7 @@ export default function StudentExams() {
                     <SelectValue placeholder="All Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Status</SelectItem>
+                    <SelectItem value="all-status">All Status</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="upcoming">Upcoming</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>

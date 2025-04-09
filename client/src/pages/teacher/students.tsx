@@ -235,9 +235,9 @@ export default function TeacherStudents() {
                     <SelectValue placeholder="All Classes" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Classes</SelectItem>
+                    <SelectItem value="all-classes">All Classes</SelectItem>
                     {isLoadingClasses ? (
-                      <SelectItem value="" disabled>
+                      <SelectItem value="loading-classes" disabled>
                         Loading classes...
                       </SelectItem>
                     ) : classes?.length > 0 ? (
@@ -247,7 +247,7 @@ export default function TeacherStudents() {
                         </SelectItem>
                       ))
                     ) : (
-                      <SelectItem value="" disabled>
+                      <SelectItem value="no-classes" disabled>
                         No classes available
                       </SelectItem>
                     )}
