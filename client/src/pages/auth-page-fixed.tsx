@@ -196,7 +196,6 @@ export default function AuthPage() {
                       )}
                     />
                     
-
                     <FormField
                       control={registerForm.control}
                       name="password"

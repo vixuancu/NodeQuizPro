@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import { AuthProvider } from "@/hooks/use-auth";
 import HomePage from "@/pages/home-page";
-import AuthPage from "@/pages/auth-page";
+import AuthPage from "@/pages/auth-page-fixed";
 import { ProtectedRoute, TeacherRoute, StudentRoute } from "./lib/protected-route";
 
 // Teacher pages
